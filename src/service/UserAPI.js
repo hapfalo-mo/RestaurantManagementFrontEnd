@@ -12,3 +12,13 @@ export const login = async (data) => {
         return error.response;
     }
 }
+
+// Signup function 
+export const signup = async (data) => {
+    try {
+        const response = await axios.post(`${API_URL}/signup`, data);
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+}
