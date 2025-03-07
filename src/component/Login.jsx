@@ -2,9 +2,10 @@ import React from "react";
 import loginbackground from "../assets/loginbackground.jpg";
 import loginSub2 from "../assets/loginSub2.jpg";
 import * as UserAPI from "../service/UserAPI";
-import { Outlet, Link, Navigate } from "react-router-dom";
+import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 function Login() {
+    const navigate = useNavigate();
     // Define States
     const [error, setError] = useState(false); //
     const [errorMessage, setErrorMessage] = useState(""); //
@@ -22,7 +23,7 @@ function Login() {
             setTimeout(() => {
                 setLoading(false);
             }, 3000);
-            alert(response.data.Message);
+            navigate("/homepage");
         } else if (response.status === 400) {
             setLoading(false);
             setError(true);
@@ -48,7 +49,7 @@ function Login() {
                 </div>
                 {/* Login Form */}
                 <div className=" relative z-10 bg-black-200 p-8 rounded-lg shadow-md w-96">
-                    <h2 className="text-2xl font-bold text-white  text-center mb-6">Welcome, Login</h2>
+                    <h4 className="text-2xl font-bold text-white  text-center mb-6">Login</h4>
                     <form onSubmit={login}>
                         {/* Email Input */}
                         <div className="mb-3">

@@ -2,21 +2,26 @@ import React, { useState } from "react";
 import loginbackground from "../assets/loginbackground.jpg";
 import signupSub1 from "../assets/signupSub1.jpg";
 import * as UserAPI from "../service/UserAPI";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 function Login() {
+    const navigate = useNavigate();
     const [error, setError] = useState(false); //
-    const [errorMessage, setErrorMessage] = useState(""); //
-    useState
-    // Login Function
-    const login = async (e) => {
+    const [errorMessage, setErrorMessage] = useState(""); //    
+    // Signup Function
+    const signup = async (e) => {
         e.preventDefault();
+        const form = e.target;
         const data = {
-            "phone": e.target.phoneNumber.value,
-            "password": e.target.password.value,
+            "phone_number": form.elements.phoneNumber.value,
+            "password": form.elements.password.value,
+            "email": form.elements.email.value,
+            "full_name": form.elements.full_name.value
         };
-        const response = await UserAPI.login(data);
+        console.log(data);
+        const response = await UserAPI.signup(data);
         if (response.status === 200) {
-            alert(response.data.Message);
+            alert("Sign up successfully");
+            navigate("/");
         } else if (response.status === 400) {
             setError(true);
             setErrorMessage(response.data.Message);
@@ -33,7 +38,7 @@ function Login() {
         >
             {/* Dark Overlay */}
             <div className="absolute inset-0 bg-black opacity-90"></div>
-            {/* Login Form */}
+            {/* Sign up Form */}
             <div className="relative z-10  flex gap-4 border-1 border-gray-600 p-8 rounded-lg">
                 {/* Carouesel Picture */}
                 <div className=" relative z-10 flex p-8 rounded-lg shadow-md w-100">
@@ -41,14 +46,15 @@ function Login() {
                 </div>
                 {/* Sing up form */}
                 <div className=" relative z-10 bg-black-200 p-8 rounded-lg shadow-md w-96">
-                    <h2 className="text-2xl font-bold text-white  text-center mb-6">Welcome, Sign up</h2>
-                    <form onSubmit={login}>
+                    <h4 className="text-2xl font-bold text-white  text-center mb-6">Sign up</h4>
+                    <form onSubmit={signup}>
                         {/* Email Input */}
                         <div className="mb-3">
-                            <label className="block text-white text-sm font-semibold mb-2" htmlFor="email">
+                            <label className="block text-white text-sm font-semibold mb-2" htmlFor="phoneNumber">
                                 Phone Number
                             </label>
                             <input
+                                name="phoneNumber"
                                 required
                                 type="text"
                                 id="phoneNumber"
@@ -56,13 +62,13 @@ function Login() {
                                 className="w-full px-4 py-2 bg-white text-gray-800 border border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                             />
                         </div>
-
                         {/* Password Input */}
                         <div className="mb-3">
                             <label className="block text-white text-sm font-semibold mb-2" htmlFor="password">
                                 Password
                             </label>
                             <input
+                                name="password"
                                 required
                                 type="password"
                                 id="password"
@@ -73,10 +79,11 @@ function Login() {
 
                         {/* Full Name Input */}
                         <div className="mb-3">
-                            <label className="block text-white text-sm font-semibold mb-2" htmlFor="fullName">
+                            <label className="block text-white text-sm font-semibold mb-2" htmlFor="full_Name">
                                 Full Name
                             </label>
                             <input
+                                name="full_name"
                                 required
                                 type="text"
                                 id="fullName"
@@ -91,6 +98,7 @@ function Login() {
                                 Email
                             </label>
                             <input
+                                name="email"
                                 required
                                 type="email"
                                 id="email"
