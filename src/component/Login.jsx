@@ -4,12 +4,18 @@ import loginSub2 from "../assets/loginSub2.jpg";
 import * as UserAPI from "../service/UserAPI";
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../hooks/userAuth";
 function Login() {
     const navigate = useNavigate();
+    const { user, saveUser } = useAuth();
     // Define States
     const [error, setError] = useState(false); //
     const [errorMessage, setErrorMessage] = useState(""); //
     const [loading, setLoading] = useState(false);
+    if (user) {
+        console.log("User is already logged in. Redirecting to homepage...");
+        navigate("/homepage");
+    }
     // Login Function
     const login = async (e) => {
         e.preventDefault();
@@ -23,6 +29,8 @@ function Login() {
             setTimeout(() => {
                 setLoading(false);
             }, 3000);
+            console.log(response.data);
+            saveUser(response.data);
             navigate("/homepage");
         } else if (response.status === 400) {
             setLoading(false);

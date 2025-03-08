@@ -22,3 +22,13 @@ export const signup = async (data) => {
         return error.response;
     }
 }
+
+// Update User function 
+export const updateUser = async (data) => {
+    try {
+        const response = await axios.put(`${API_URL}/updateUser`, data);
+        return response;
+    } catch (error) {
+        return error.response;
+    }
+}
