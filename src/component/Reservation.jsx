@@ -7,20 +7,53 @@ import image3 from "../assets/reservation3.png";
 import "flatpickr/dist/themes/material_green.css";
 import { useRef, useEffect } from "react";
 import flatpickr from "flatpickr";
+import * as BookingAPI from "../service/BookingAPI";
+import { useAuth } from "../hooks/userAuth";
 export default function Reservation() {
     const dateInputRef = useRef(null);
+    const { user, setUser } = useAuth();
 
     useEffect(() => {
         flatpickr(dateInputRef.current, {
-            enableTime: false,
-            dateFormat: "dd-mm-yyyy hh:mm:ss",
+            enableTime: true,
+            noCalendar: false,
+            dateFormat: "Y-m-d H:i:S",
             minDate: "today",
         });
     }, []);
+
+    const bookingTable = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const name = form.name.value;
+        const phone = form.phone.value;
+        const guests = form.guests.value;
+        const date = form.date.value;
+        const request = form.request.value;
+        const data = {
+            "UserId": user.Data.id,
+            "CustomerName": name,
+            "CustomerPhone": phone,
+            "GuestCount": parseInt(guests),
+            "BookingDate": date.toString(),
+            "Description": request
+        }
+        console.log(data);
+        try {
+            const response = await BookingAPI.BookingTable(data);
+            if (response.status === 200) {
+                alert("Booking Successfully");
+            } else if (response.status === 400) {
+                alert(response.data.Message);
+            }
+        } catch (error) {
+            console.error("Booking failed:", error);
+        }
+    }
     return (
         <div>
             <NavBar />
-            <div className="bg-black text-white font-sans">
+            <div className=" w-full h-auto bg-black text-white">
                 {/* Header Section */}
                 <div
                     className="relative h-[500px] flex items-center justify-center bg-cover bg-center mx-12"
@@ -36,7 +69,7 @@ export default function Reservation() {
                     <p className="text-gray-400 mb-6 menu-content">
                         Select your date and time to make a reservation.
                     </p>
-                    <form className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <form onSubmit={bookingTable} className="p-6 rounded-lg grid grid-cols-1 md:grid-cols-4 gap-4">
                         <input
                             type="text"
                             placeholder="Your Name"
@@ -68,8 +101,14 @@ export default function Reservation() {
                             className="w-full col-span-4 p-3 bg-black text-white border border-gray-600 rounded-md h-24"
                             name="request"
                         ></textarea>
+                        {/* Note from Restaurant */}
+                        <div className="w-full col-span-4 lg:col-span-4 text-left">
+                            <p className="menu-content text-gray-500">* Your booking will be confirmed via telephone number. Please wait for it</p>
+                            <p className="menu-content text-gray-500">* Confirmed booking just allow for 15 minutes late, so you should consider the time please !</p>
+                            <p className="menu-content text-gray-500">*Thank you for choosing us. Have a good day !</p>
+                        </div>
                         <div className="w-full col-span-4 lg:mt-8">
-                            <button className="w-1/4 bg-yellow-600 text-black px-6 py-3 font-semibold hover:bg-yellow-600 menu-content">
+                            <button type="submit" className="w-1/4 bg-yellow-600 text-black px-6 py-3 font-semibold hover:bg-yellow-600 menu-content">
                                 Book Now
                             </button>
                         </div>

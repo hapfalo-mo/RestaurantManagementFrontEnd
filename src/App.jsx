@@ -9,6 +9,9 @@ import { StrictMode } from "react";
 import { AuthProvider } from "./hooks/userAuth";
 import UpdateUser from "./component/UpdateUser";
 import Reservation from "./component/Reservation";
+import AdminLogin from "./component/Admin/AdminLogin";
+import AdminRequestPage from "./component/Admin/AdminRequestPage";
+import ReservationHistory from "./component/ReservationHistory";
 function App() {
 
   return (
@@ -21,6 +24,10 @@ function App() {
           <Route path="/menu" element={<Menu />} />
           <Route path="/infor" element={<UpdateUser />} />
           <Route path="/reservation" element={<Reservation />}></Route>
+          <Route path="/reservationhistory" element={<ReservationHistory />}></Route>
+          {/* <Route path="/reservation" element={<Reservation />}></Route> */}
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminRequestPage />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
