@@ -1,29 +1,32 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 // Create AuthContext
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    console.log("AuthProvider is rending...")
-    const [user, setUser] = useState(null);
 
+    const [user, setUser] = useState(() => {
+        const storedUser = Cookies.get("user");
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
+    const navigate = useNavigate();
     // Check if user is logged in 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        } else {
-            setUser(null);
+        if (user === null) {
+            navigate("/");
         }
-    }, []);
+    }, [user, navigate]);
     // Login Function
     const saveUser = (userData) => {
         setUser(userData);
-        localStorage.setItem("user", JSON.stringify(userData)); // Store user data
+        Cookies.set("user", JSON.stringify(userData), { expires: 3 }); // Store user data
     };
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem("user");
+    const logout = async () => {
+        await setUser(null);
+        await Cookies.remove("user", { path: "/" });
+        await Cookies.remove("token", { path: "/" });
+        navigate("/");
     };
 
     return (

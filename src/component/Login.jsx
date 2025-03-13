@@ -5,6 +5,8 @@ import * as UserAPI from "../service/UserAPI";
 import { Outlet, Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../hooks/userAuth";
+import { jwtDecode } from "jwt-decode";
+
 function Login() {
     const navigate = useNavigate();
     const { user, saveUser } = useAuth();
@@ -13,7 +15,6 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState(""); //
     const [loading, setLoading] = useState(false);
     if (user) {
-        console.log("User is already logged in. Redirecting to homepage...");
         navigate("/homepage");
     }
     // Login Function
@@ -29,8 +30,13 @@ function Login() {
             setTimeout(() => {
                 setLoading(false);
             }, 3000);
-            console.log(response.data);
-            saveUser(response.data);
+            try {
+                const userDecode = jwtDecode(response?.data.Data);
+                console.log(userDecode);
+                saveUser(userDecode);
+            } catch (error) {
+                console.log(error);
+            }
             navigate("/homepage");
         } else if (response.status === 400) {
             setLoading(false);

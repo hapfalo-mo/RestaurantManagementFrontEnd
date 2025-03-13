@@ -6,13 +6,14 @@ import image3 from "../assets/information3.png";
 import { useState } from "react";
 import { useAuth } from "../hooks/userAuth";
 import * as UserAPI from "../service/UserAPI";
+import Cookies from "js-cookie";
 export default function UpdateUser() {
     const [isReadOnly, setIsReadOnly] = useState(true);
     const { user, setUser } = useAuth();
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    if (!user || !user.Data) {
-        return <p className="text-white text-center">Loading user data...</p>;
+    if (!user) {
+        return <p className="text-black text-center">Loading user data...</p>;
     }
     // Function 
     const toggleReadOnly = (e) => {
@@ -22,22 +23,20 @@ export default function UpdateUser() {
     const onChangeValue = (e) => {
         setUser(prevUser => ({
             ...prevUser,
-            Data: {
-                ...prevUser.Data,
-                [e.target.name]: e.target.value
-            }
+            [e.target.name]: e.target.value
         }));
     };
     const updateUser = async (e) => {
         e.preventDefault();
         const data = {
-            "id": user.Data.id,
-            "email": user.Data.email,
-            "password": user.Data.password,
-            "fullName": user.Data.full_name,
-            "phoneNumber": user.Data.phone_number,
+            "id": user?.UserID,
+            "email": user?.email,
+            "password": user?.password,
+            "fullName": user?.fullName,
+            "phoneNumber": user?.phone,
         };
-        console.log(data)
+        const token = Cookies.get('token');
+        console.log(token);
         try {
             const response = await UserAPI.updateUser(data);
             if (response.status === 200) {
@@ -45,9 +44,13 @@ export default function UpdateUser() {
             } else if (response.status === 400) {
                 setError(true);
                 setErrorMessage(response.data.Message);
+            } else {
+                setError(true);
+                setErrorMessage(response.data.error);
             }
         } catch (error) {
             console.error("Update failed:", error);
+            alert(error);
         }
     }
     // Close Error Message
@@ -94,16 +97,16 @@ export default function UpdateUser() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <span className="text-gray-400 text-sm">Full Name</span>
-                                    <input required name="full_name" onChange={onChangeValue} readOnly={isReadOnly} type="text" value={user.Data.full_name} placeholder="Enter Your Name" className="p-3 bg-black text-white border border-gray-600 w-full rounded-md" />
+                                    <input required name="fullName" onChange={onChangeValue} readOnly={isReadOnly} type="text" value={user?.fullName} placeholder="Enter Your Name" className="p-3 bg-black text-white border border-gray-600 w-full rounded-md" />
                                 </div>
                                 <div>
                                     <span className="text-gray-400 text-sm">Phone Number</span>
-                                    <input required name="phone_number" onChange={onChangeValue} readOnly={isReadOnly} type="text" value={user.Data.phone_number} placeholder="Enter Your Phone Number" className="p-3 bg-black text-white border border-gray-600 w-full rounded-md" />
+                                    <input required name="phone" onChange={onChangeValue} readOnly={isReadOnly} type="text" value={user?.phone} placeholder="Enter Your Phone Number" className="p-3 bg-black text-white border border-gray-600 w-full rounded-md" />
                                 </div>
                             </div>
                             <div className="mt-4">
                                 <span className="text-gray-400 text-sm"> Email</span>
-                                <input name="email" onChange={onChangeValue} readOnly={isReadOnly} type="email" value={user.Data.email} placeholder="Enter Your Email" className="p-3 bg-black text-white border border-gray-600 w-full rounded-md" />
+                                <input name="email" onChange={onChangeValue} readOnly={isReadOnly} type="email" value={user?.email} placeholder="Enter Your Email" className="p-3 bg-black text-white border border-gray-600 w-full rounded-md" />
                             </div>
                             <div className="mt-4">
                                 <span className="text-gray-400 text-sm">Password</span>
