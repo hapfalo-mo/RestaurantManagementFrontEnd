@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 // Create AuthContext
 const AuthContext = createContext();
 
@@ -28,6 +29,22 @@ export const AuthProvider = ({ children }) => {
         await Cookies.remove("token", { path: "/" });
         navigate("/");
     };
+    //  Check expire for Token
+    useEffect(() => {
+        const token = Cookies.get('token')
+        try {
+            const decodedToken = jwtDecode(token);
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (decodedToken?.exp < currentTime) {
+                alert("Your time is out. Login again please")
+                logout();
+            }
+        } catch (error) {
+            console.error("Error coding token", error);
+            Cookies.remove('token');
+            navigate("/")
+        }
+    })
 
     return (
         <AuthContext.Provider value={{ user, setUser, logout, saveUser }}>
