@@ -39,3 +39,35 @@ export const updateUser = async (data) => {
         return error.response;
     }
 }
+
+// Get All User 
+export const getAllUserPagingList = async (data) => {
+    try {
+        const response = await axios.post(`${API_URL}/getAllUser`, data);
+        return response
+    } catch (error) {
+        console.log(error.response)
+    }
+}
+
+// Export File CSV User List 
+export const exportCSVFile = async () => {
+    try {
+        const response = await axios.get(`${API_URL}/export-csvFile`, {
+            responseType: "blob"
+        });
+        const blob = new Blob([response.data], { type: "text/csv" });
+
+        // Create a blob from the response data 
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "users.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.log(error.response)
+    }
+}

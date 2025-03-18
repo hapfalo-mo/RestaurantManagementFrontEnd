@@ -23,7 +23,6 @@ export default function ReservationHistory() {
             }
             const userId = user?.UserID
             const response = await BookingAPI.getBookingPagingList(data, userId)
-            if (!userId) return;
             if (response?.data.Data) {
                 setOrders(response?.data.Data);
                 const totalRecords = response?.data.Data.length + 1

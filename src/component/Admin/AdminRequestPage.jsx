@@ -1,50 +1,63 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
+import { FaCircle, FaDotCircle, FaStar } from "react-icons/fa";
 import { FaPlus, FaDownload } from "react-icons/fa";
 import { FiStar } from "react-icons/fi";
+import * as UserAPI from "../../service/UserAPI"
+import { data } from "react-router-dom";
 export default function AdminRequestPage() {
-    const products = [
-        { name: "Phone 25.8", stock: "12,000", price: "$1200", category: "Electronics", status: "In Stock", tags: "Best Seller", rate: 4.5 },
-        { name: "Smart Watch", stock: "37,128", price: "$250", category: "Electronics", status: "Low Inventory", tags: "Trending", rate: 4.3 },
-        { name: "Potato Chips", stock: "0", price: "$2", category: "Food & Drinks", status: "Out of Stock", tags: "Popular", rate: 4.7 },
-        { name: "Gaming Laptop", stock: "5,000", price: "$1500", category: "Electronics", status: "In Stock", tags: "High Performance", rate: 4.8 },
-        { name: "Wireless Earbuds", stock: "8,500", price: "$99", category: "Electronics", status: "In Stock", tags: "Noise Cancelling", rate: 4.6 },
-    ];
+    const [userList, setUserList] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    // Get All User List 
+    const getAllUser = async () => {
+        try {
+            let requestPage = {
+                "page": currentPage,
+                "pageSize": 10
+            }
+            const response = await UserAPI.getAllUserPagingList(requestPage);
+            setUserList(response?.data.Data)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        getAllUser();
+    }, [currentPage]);
     return (
         <div className="flex h-screen bg-gray-100">
             {/* Sidebar */}
-            <aside className="w-64 bg-white shadow-md p-5 space-y-4">
-                <h2 className="text-xl font-bold text-blue-600">ShopPoint</h2>
+            <aside className="w-auto shadow-md p-5 space-y-4 bg-blue-600">
+                <h1 className="text-4xl font-bold text-white">SteakHouse Dashboard</h1>
                 <nav>
                     <ul className="space-y-2">
-                        <li className="text-gray-700 font-semibold flex items-center">
-                            <IoIosArrowForward className="mr-2" /> Products
+                        <li className="text-white font-semibold flex items-center cursor-pointer">
+                            <IoIosArrowForward className="mr-2 " /> User
                         </li>
-                        <li className="text-gray-500 hover:text-gray-900 flex items-center">
-                            <IoIosArrowForward className="mr-2" /> Orders
+                        <li className="text-white hover:text-gray-900 flex items-center  cursor-pointer">
+                            <IoIosArrowForward className="mr-2 " /> Booking
                         </li>
-                        <li className="text-gray-500 hover:text-gray-900 flex items-center">
-                            <IoIosArrowForward className="mr-2" /> Customers
+                        <li className="text-white hover:text-gray-900 flex items-center cursor-pointer">
+                            <IoIosArrowForward className="mr-2 " /> Menu
                         </li>
                     </ul>
                 </nav>
             </aside>
-
             {/* Main Content */}
             <main className="flex-1 p-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Products Management</h1>
+                    <h1 className="text-2xl font-bold">User Management</h1>
                     <div className="flex space-x-3">
                         <button className="flex items-center bg-green-500 text-white px-4 py-2 rounded">
-                            <FaPlus className="mr-2" /> Add New Product
+                            <FaPlus className="mr-2" /> Add New User
                         </button>
-                        <button className="flex items-center bg-blue-500 text-white px-4 py-2 rounded">
+                        <button onClick={UserAPI.exportCSVFile} className="flex items-center bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
                             <FaDownload className="mr-2" /> Export CSV
                         </button>
                     </div>
                 </div>
-
-                {/* Product Table */}
+                {/* User Table */}
                 <div className="mt-6 bg-white shadow-md rounded p-4">
                     <div className="flex justify-between mb-4">
                         <input type="text" placeholder="Search Product" className="border p-2 w-1/3" />
@@ -53,29 +66,39 @@ export default function AdminRequestPage() {
                     <table className="w-full border-collapse border border-gray-200">
                         <thead>
                             <tr className="bg-gray-100">
-                                <th className="border p-2 text-left">Product Name</th>
-                                <th className="border p-2 text-left">Stock</th>
-                                <th className="border p-2 text-left">Price</th>
-                                <th className="border p-2 text-left">Category</th>
-                                <th className="border p-2 text-left">Status</th>
-                                <th className="border p-2 text-left">Tags</th>
-                                <th className="border p-2 text-left">Rate</th>
+                                <th className="border p-2 text-left">ID</th>
+                                <th className="border p-2 text-left">PhoneNumber</th>
+                                <th className="border p-2 text-left">Email</th>
+                                <th className="border p-2 text-left">FullName</th>
+                                <th className="border p-2 text-left">CreatedAt</th>
+                                <th className="border p-2 text-left">UpdatedAt</th>
+                                <th className="border p-2 text-left">DeletedAt</th>
+                                <th className="border p-2 text-left">Role</th>
+                                <th className="border p-2 text-left">Point</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map((product, index) => (
-                                <tr key={index} className="border">
-                                    <td className="border p-2">{product.name}</td>
-                                    <td className="border p-2">{product.stock}</td>
-                                    <td className="border p-2">{product.price}</td>
-                                    <td className="border p-2">{product.category}</td>
-                                    <td className="border p-2">{product.status}</td>
-                                    <td className="border p-2">{product.tags}</td>
-                                    <td className="border p-2 flex items-center">
-                                        <FiStar className="text-yellow-500" /> {product.rate}
-                                    </td>
+                            {Array.isArray(userList) && userList.length > 0 ? (
+                                userList.map((item, index) => (
+                                    <tr key={index} className="border">
+                                        <td className="border p-2">{item?.id || ""}</td>
+                                        <td className="border p-2">{item?.phone_number || ""}</td>
+                                        <td className="border p-2">{item?.email || ""}</td>
+                                        <td className="border p-2">{item?.full_name || ""}</td>
+                                        <td className="border p-2">{item?.created_at ? new Date(item.created_at).toLocaleString() : ""}</td>
+                                        <td className="border p-2">{item?.updated_at ? new Date(item.updated_at).toLocaleString() : ""}</td>
+                                        <td className="border p-2">{item?.deleted_at?.String || ""}</td>
+                                        <td className="border p-2">{item?.role || ""}</td>
+                                        <td className="border p-2 flex items-center">
+                                            <FaDotCircle className="text-yellow-500" /> {item?.point ?? 0}
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="9" className="text-center p-4">No data available</td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -14,10 +14,11 @@ export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
     // Check if user is logged in 
     useEffect(() => {
-        if (user === null) {
-            navigate("/");
+        const publicRoutes = ["/signup"];
+        if (user === null && !publicRoutes.includes(location.pathname)) {
+            setTimeout(() => navigate("/"), 0);
         }
-    }, [user, navigate]);
+    }, [user, navigate, location]);
     // Login Function
     const saveUser = (userData) => {
         setUser(userData);
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
             Cookies.remove('token');
             navigate("/")
         }
-    })
+    }, [])
 
     return (
         <AuthContext.Provider value={{ user, setUser, logout, saveUser }}>
