@@ -43,7 +43,11 @@ export const updateUser = async (data) => {
 // Get All User 
 export const getAllUserPagingList = async (data) => {
     try {
-        const response = await axios.post(`${API_URL}/getAllUser`, data);
+        const response = await axios.post(`${API_URL}/getAllUser`, data, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
         return response
     } catch (error) {
         console.log(error.response)
@@ -69,5 +73,19 @@ export const exportCSVFile = async () => {
         window.URL.revokeObjectURL(url);
     } catch (error) {
         console.log(error.response)
+    }
+}
+
+// Block or UnBlock User 
+export const blockOrUnblockUser = async (userId) => {
+    try {
+        const response = await axios.put(`${API_URL}/block-unblock-user/${userId}`, {}, {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        return response
+    } catch (error) {
+        console.log(error)
     }
 }
