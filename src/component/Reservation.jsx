@@ -31,7 +31,7 @@ export default function Reservation() {
         const date = form.date.value;
         const request = form.request.value;
         const data = {
-            "UserId": user?.UserID,
+            "UserId": user?.userID,
             "CustomerName": name,
             "CustomerPhone": phone,
             "GuestCount": parseInt(guests),

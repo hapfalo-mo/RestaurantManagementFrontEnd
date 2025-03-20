@@ -58,6 +58,10 @@ export const getAllUserPagingList = async (data) => {
 export const exportCSVFile = async () => {
     try {
         const response = await axios.get(`${API_URL}/export-csvFile`, {
+            headers:
+            {
+                "Authorization": `Bearer ${token}`
+            },
             responseType: "blob"
         });
         const blob = new Blob([response.data], { type: "text/csv" });

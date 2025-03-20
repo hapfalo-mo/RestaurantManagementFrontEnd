@@ -21,7 +21,7 @@ export default function ReservationHistory() {
                 "page": currentPage,
                 "pageSize": 5
             }
-            const userId = user?.UserID
+            const userId = user?.userID
             const response = await BookingAPI.getBookingPagingList(data, userId)
             if (response?.data.Data) {
                 setOrders(response?.data.Data);

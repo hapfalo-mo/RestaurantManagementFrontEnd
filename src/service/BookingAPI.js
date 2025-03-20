@@ -19,3 +19,13 @@ export const getBookingPagingList = async (data, id) => {
         }
     });
 }
+
+// Get All Paging Booking List (Admin)
+export const getAllBookingPaging = async (data) => {
+    const response = await axios.post(`${API_URL}/get-all-bookings`, data, {
+        headers: {
+            "Authorization": `Bearer ${token} `
+        }
+    })
+    return response?.data
+}
