@@ -11,42 +11,17 @@ export const AuthProvider = ({ children }) => {
         const storedUser = Cookies.get("user");
         return storedUser ? JSON.parse(storedUser) : null;
     });
-    const navigate = useNavigate();
-    // Check if user is logged in 
-    useEffect(() => {
-        const publicRoutes = ["/signup"];
-        if (user === null && !publicRoutes.includes(location.pathname)) {
-            setTimeout(() => navigate("/"), 0);
-        }
-    }, [user, navigate, location]);
     // Login Function
     const saveUser = (userData) => {
         setUser(userData);
         Cookies.set("user", JSON.stringify(userData), { expires: 3 }); // Store user data
     };
     const logout = async () => {
-        await setUser(null);
-        await Cookies.remove("user", { path: "/" });
-        await Cookies.remove("token", { path: "/" });
-        navigate("/");
+        setUser(null);
+        Cookies.remove("user", { path: "/" });
+        Cookies.remove("token", { path: "/" });
+        window.location.href = "/";
     };
-    //  Check expire for Token
-    useEffect(() => {
-        const token = Cookies.get('token')
-        try {
-            const decodedToken = jwtDecode(token);
-            const currentTime = Math.floor(Date.now() / 1000);
-            if (decodedToken?.exp < currentTime) {
-                alert("Your time is out. Login again please")
-                logout();
-            }
-        } catch (error) {
-            console.error("Error coding token", error);
-            Cookies.remove('token');
-            navigate("/")
-        }
-    }, [])
-
     return (
         <AuthContext.Provider value={{ user, setUser, logout, saveUser }}>
             {children}

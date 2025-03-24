@@ -12,25 +12,33 @@ import Reservation from "./component/Reservation";
 import AdminLogin from "./component/Admin/AdminLogin";
 import AdminRequestPage from "./component/Admin/AdminRequestPage";
 import ReservationHistory from "./component/ReservationHistory";
+import FoodSelectionPage from "./component/OrderProcess/FoodSelectionPage";
+import SubLogin from "./component/SubLogin"
+import { useAuth } from "./hooks/userAuth";
+function RequireAuth({ children }) {
+  const { user } = useAuth();
+  return user ? children : <Login />;
+}
 function App() {
-
   return (
-    <BrowserRouter>
-      <AuthProvider>
+    <AuthProvider>
+      <BrowserRouter>
+
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/sub-login" element={<SubLogin />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/menu" element={<Menu />} />
-          <Route path="/infor" element={<UpdateUser />} />
-          <Route path="/reservation" element={<Reservation />}></Route>
-          <Route path="/reservationhistory" element={<ReservationHistory />}></Route>
-          {/* <Route path="/reservation" element={<Reservation />}></Route> */}
+          <Route path="/infor" element={<RequireAuth><UpdateUser /></RequireAuth>} />
+          <Route path="/reservation" element={<RequireAuth><Reservation /></RequireAuth>}></Route>
+          <Route path="/reservationhistory" element={<RequireAuth><ReservationHistory /></RequireAuth>}></Route>
+          <Route path="/food-select" element={<RequireAuth><FoodSelectionPage /></RequireAuth>}></Route>
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminRequestPage />} />
         </Routes>
-      </AuthProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 

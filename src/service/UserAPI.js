@@ -14,7 +14,21 @@ export const login = async (data) => {
         return error.response;
     }
 }
+// Login Google 
+export const loginGoogle = async () => {
 
+    try {
+        let data = Cookies.get("ggrequest")
+        const response = await axios.post(
+            `${API_URL}/login-googgle`, data, {
+            withCredentials: true
+        }
+        );
+        return response
+    } catch (error) {
+        console.log(error)
+    }
+}
 // Signup function 
 export const signup = async (data) => {
     try {
