@@ -7,6 +7,7 @@ import Homepage from "./component/Homepage";
 import Menu from "./component/Menu";
 import { StrictMode } from "react";
 import { AuthProvider } from "./hooks/userAuth";
+import { CartProvider } from "./hooks/useCart";
 import UpdateUser from "./component/UpdateUser";
 import Reservation from "./component/Reservation";
 import AdminLogin from "./component/Admin/AdminLogin";
@@ -22,22 +23,23 @@ function RequireAuth({ children }) {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/sub-login" element={<SubLogin />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/homepage" element={<Homepage />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/infor" element={<RequireAuth><UpdateUser /></RequireAuth>} />
-          <Route path="/reservation" element={<RequireAuth><Reservation /></RequireAuth>}></Route>
-          <Route path="/reservationhistory" element={<RequireAuth><ReservationHistory /></RequireAuth>}></Route>
-          <Route path="/food-select" element={<RequireAuth><FoodSelectionPage /></RequireAuth>}></Route>
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminRequestPage />} />
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/sub-login" element={<SubLogin />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/homepage" element={<Homepage />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/infor" element={<RequireAuth><UpdateUser /></RequireAuth>} />
+            <Route path="/reservation" element={<RequireAuth><Reservation /></RequireAuth>}></Route>
+            <Route path="/reservationhistory" element={<RequireAuth><ReservationHistory /></RequireAuth>}></Route>
+            <Route path="/food-select" element={<RequireAuth><FoodSelectionPage /></RequireAuth>}></Route>
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminRequestPage />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </AuthProvider>
   )
 }

@@ -4,11 +4,13 @@ import Footer from "../Basic/Footer";
 import { useState } from "react";
 import * as FoodAPI from "../../service/FoodAPI";
 import { useEffect } from "react";
+import { useCart } from "../../hooks/useCart";
 
 export default function FoodSelectionPage() {
     const [menu, setMenu] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
+    const { addToCart } = useCart();
     const getAllFood = async () => {
         try {
             let data = {
@@ -68,11 +70,11 @@ export default function FoodSelectionPage() {
                                     Category: {item?.Description}
                                 </p>
                             </div>
-
                             {/* Add to cart button */}
                             <button
                                 // onClick={() => addToCart(item)}
                                 className=" cursor-pointer absolute bottom-2 right-2 bg-yellow-500 text-black text-sm px-3 py-1 rounded hover:bg-yellow-400"
+                                onClick={() => addToCart(item)}
                             >
                                 Add to Cart
                             </button>
