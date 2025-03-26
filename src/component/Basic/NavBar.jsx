@@ -22,12 +22,14 @@ export default function NavBar() {
                 {/* Giỏ hàng */}
                 {user &&
                     <li className="relative hover:text-yellow-500 cursor-pointer">
-                        <FaShoppingCart size={20} />
-                        {totalQuantity >= 1 && (
-                            <span className="absolute -top-4 -right-4 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                                {totalQuantity}
-                            </span>
-                        )}
+                        <Link to={"/cart"}>
+                            <FaShoppingCart size={20} />
+                            {totalQuantity >= 1 && (
+                                <span className="absolute -top-4 -right-4 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                                    {totalQuantity}
+                                </span>
+                            )}
+                        </Link>
                     </li>
                 }
             </ul>

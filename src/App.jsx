@@ -14,6 +14,7 @@ import AdminLogin from "./component/Admin/AdminLogin";
 import AdminRequestPage from "./component/Admin/AdminRequestPage";
 import ReservationHistory from "./component/ReservationHistory";
 import FoodSelectionPage from "./component/OrderProcess/FoodSelectionPage";
+import CartPage from "./component/OrderProcess/CartPage"
 import SubLogin from "./component/SubLogin"
 import { useAuth } from "./hooks/userAuth";
 function RequireAuth({ children }) {
@@ -35,6 +36,7 @@ function App() {
             <Route path="/reservation" element={<RequireAuth><Reservation /></RequireAuth>}></Route>
             <Route path="/reservationhistory" element={<RequireAuth><ReservationHistory /></RequireAuth>}></Route>
             <Route path="/food-select" element={<RequireAuth><FoodSelectionPage /></RequireAuth>}></Route>
+            <Route path="/cart" element={<RequireAuth><CartPage /></RequireAuth>}></Route>
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminRequestPage />} />
           </Routes>
