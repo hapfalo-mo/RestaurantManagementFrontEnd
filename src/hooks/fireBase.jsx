@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
 export const provider = new GoogleAuthProvider();
-
+export const fprovider = new FacebookAuthProvider();
 const firebaseConfig = {
     apiKey: "AIzaSyBl2GgFCXU3wHhFkhY8Roh2MKcdYbxn27s",
     authDomain: "jsp-project-accf6.firebaseapp.com",

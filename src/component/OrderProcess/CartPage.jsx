@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../Basic/NavBar";
 import Footer from "../Basic/Footer"
 import { useCart } from "../../hooks/useCart";
+import { useAuth } from "../../hooks/userAuth";
 import * as FoodAPI from "../../service/FoodAPI"
+import * as OrderAPI from "../../service/OrderAPI"
 // import {}
 import Cookies from "js-cookie";
 export default function PizzaCart() {
     const [orderItem, setOrderItem] = useState([]);
     const [totalMoney, setTotal] = useState(0);
-    const { addToCart, removeFromCart, subtractFromCart, carts } = useCart();
+    const { addToCart, removeFromCart, subtractFromCart, carts, setCarts } = useCart();
+    const { user } = useAuth();
     const getAllFood = async () => {
         let request = {
             "page": 1,
@@ -27,6 +30,46 @@ export default function PizzaCart() {
             console.log(error);
         }
     }
+    const paymentfunction = async () => {
+        try {
+            let OrderRequest = {
+                "UserId": user.userID,
+                "TotalPrice": totalMoney
+            };
+
+            const resultOrder = await OrderAPI.createNewOrder(OrderRequest);
+            if (!resultOrder) {
+                console.log("Cannot get resultOrder");
+                return;
+            }
+
+            const cart = Cookies.get("cart");
+            const orderItemList = JSON.parse(cart);
+
+            for (let item of orderItemList) {
+                let data2 = {
+                    "OrderId": resultOrder?.Data.OrderId,
+                    "FoodId": item?.Id,
+                    "Quantity": item?.quantity,
+                    "Price": item?.Price * item?.quantity
+                };
+                const response = await OrderAPI.createOrderItem(data2);
+                console.log("Order item response:", response);
+            }
+
+            setCarts([]);
+            Cookies.remove("cart");
+
+            setTimeout(() => {
+                alert("Đơn hàng đã được tạo thành công!");
+            }, 500);
+
+        } catch (error) {
+            console.log("Error:", error);
+        }
+    };
+
+
     useEffect(() => {
         getAllFood();
     }, [])
@@ -124,7 +167,9 @@ export default function PizzaCart() {
                                 <span>Phí Giao Hàng</span>
                                 <span>0$</span>
                             </div>
-                            <div className="bg-yellow-700 hover:bg-yellow-900 cursor-pointer text-white rounded-lg px-4 py-3 text-center font-semibold">
+                            <div className="bg-yellow-700 hover:bg-yellow-900 cursor-pointer text-white rounded-lg px-4 py-3 text-center font-semibold"
+                                onClick={paymentfunction}
+                            >
                                 Thanh Toán {totalMoney.toLocaleString()}$
                             </div>
                         </div>

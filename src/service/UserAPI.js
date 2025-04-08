@@ -1,12 +1,14 @@
-import { Cookie } from '@mui/icons-material';
+
 import axios from 'axios';
 import Cookies from 'js-cookie';
 const API_URL = 'http://localhost:1611/api/v1/users';
+const API_URL_USER = 'http://localhost:1703/api/v1/users';
+
 const token = Cookies.get('token');
 // Login function 
 export const login = async (data) => {
     try {
-        const response = await axios.post(`${API_URL}/login`, data, {
+        const response = await axios.post(`${API_URL_USER}/token-login`, data, {
             withCredentials: true
         });
         return response;

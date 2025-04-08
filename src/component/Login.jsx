@@ -5,8 +5,8 @@ import * as UserAPI from "../service/UserAPI";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/userAuth";
 import { jwtDecode } from "jwt-decode";
-import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../hooks/fireBase";
+import { signInWithPopup, FacebookAuthProvider } from "firebase/auth";
+import { auth, provider, fprovider } from "../hooks/fireBase";
 import Cookies from "js-cookie";
 
 function Login() {
@@ -19,7 +19,7 @@ function Login() {
     const login = async (e) => {
         e.preventDefault();
         const data = {
-            phone: e.target.phoneNumber.value,
+            phone_number: e.target.phoneNumber.value,
             password: e.target.password.value,
         };
         setLoading(true);
@@ -27,8 +27,10 @@ function Login() {
         if (response.status === 200) {
             setTimeout(() => setLoading(false), 3000);
             try {
-                const userDecode = jwtDecode(response?.data.Data);
+                console.log(response?.data.data);
+                const userDecode = jwtDecode(response?.data.data);
                 saveUser(userDecode);
+                console.log(user);
                 navigate("/homepage");
             } catch (err) {
                 console.log(err);
@@ -76,6 +78,32 @@ function Login() {
         }
     };
 
+    // Facebook Login 
+    const handleFacebookLogin = async () => {
+        try {
+            const result = await signInWithPopup(auth, fprovider);
+            const user = result.user;
+
+            // const credential = FacebookAuthProvider.credentialFromResult(result);
+            // const accessToken = credential.accessToken;
+            console.log(user);
+            // const data = {
+            //     email: user?.email,
+            //     isVerify: user?.emailVerified,
+            // };
+        } catch (error) {
+            console.log(error)
+        }
+    };
+
+    // Zalo Login 
+    const handleZaloLogin = async () => {
+        const appId = "679175316933850842";
+        const redirectURL = encodeURIComponent("http://localhost:5173/zalo-callback");
+        const state = "login_zalo";
+        const zaloLoginUrl = `https://oauth.zalo.me/auth?app_id=${appId}&redirect_uri=${redirectURL}&state=${state}`;
+        window.location.href = zaloLoginUrl;
+    }
     return (
         <div
             className="h-screen w-screen bg-cover flex items-center justify-center relative"
@@ -157,6 +185,35 @@ function Login() {
                                 className="w-5 h-5"
                             />
                             Sign in with Google
+                        </button>
+                    </div>
+                    <div className="text-center mt-4">
+                        <button
+                            type="button"
+                            onClick={handleZaloLogin}
+                            className="cursor-pointer w-full flex items-center justify-center gap-2 bg-[#0084ff] text-white font-medium py-2 rounded-md hover:bg-[#006edc] transition duration-300"
+                        >
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg"
+                                alt="Zalo Logo"
+                                className="w-5 h-5 rounded-full p-0.5"
+                            />
+                            Sign in with Zalo
+                        </button>
+                    </div>
+
+                    <div className="text-center mt-4">
+                        <button
+                            type="button"
+                            onClick={handleFacebookLogin}
+                            className="cursor-pointer w-full flex items-center justify-center gap-2 bg-blue-800 text-white font-medium py-2 rounded-md hover:bg-[#145ecb] transition duration-300"
+                        >
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png"
+                                alt="Facebook Logo"
+                                className="w-5 h-5 rounded-full p-0.5"
+                            />
+                            Sign in with Facebook
                         </button>
                     </div>
                     <div className="text-center mt-4">

@@ -4,6 +4,7 @@ import { Cookie } from "@mui/icons-material";
 const CartContext = createContext();
 export const CartProvider = ({ children }) => {
     const [carts, setCarts] = useState([]);
+    const [showNotification, setShowNotification] = useState(false);
 
     // Load Card from Cookies
     const loadCartFromCookies = () => {
@@ -41,6 +42,9 @@ export const CartProvider = ({ children }) => {
         }
         Cookies.set("cart", JSON.stringify(cartItem), { expires: 1 })
         setCarts(cartItem);
+        // Notification
+        setShowNotification(true);
+        setTimeout(() => setShowNotification(false), 2000);
     };
     // Function Add To Cart
     const subtractFromCart = (food) => {
@@ -59,6 +63,7 @@ export const CartProvider = ({ children }) => {
             );
             Cookies.set("cart", JSON.stringify(updatedCart), { expires: 1 })
             setCarts(updatedCart);
+
         }
     };
     // Function Remove From cart 
@@ -73,8 +78,24 @@ export const CartProvider = ({ children }) => {
     const totalQuantity = carts.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
-        <CartContext.Provider value={{ carts, addToCart, totalQuantity, removeFromCart, subtractFromCart }}>
+        <CartContext.Provider value={{ carts, addToCart, totalQuantity, removeFromCart, subtractFromCart, setCarts }}>
             {children}
+            {showNotification && (
+                <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-xl z-50 w-80">
+                    <div className="text-green-500 text-4xl mb-4 text-center border-none">
+                        ✔
+                    </div>
+                    <div className="text-lg font-bold text-center mb-4">
+                        Thêm vào giỏ hàng thành công
+                    </div>
+                    <button
+                        onClick={() => setShowNotification(false)}
+                        className="bg-red-500 text-white px-6 py-2 rounded-md w-full hover:bg-red-600 transition duration-300 cursor-pointer"
+                    >
+                        OK
+                    </button>
+                </div>
+            )}
         </CartContext.Provider>
     );
 };
