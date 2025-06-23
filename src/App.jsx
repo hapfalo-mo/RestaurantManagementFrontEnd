@@ -17,6 +17,7 @@ import FoodSelectionPage from "./component/OrderProcess/FoodSelectionPage";
 import CartPage from "./component/OrderProcess/CartPage"
 import SubLogin from "./component/SubLogin"
 import OrderHistory from "./component/OrderProcess/OrderHistory";
+import { ToastContainer } from "react-toastify";
 import { useAuth } from "./hooks/userAuth";
 function RequireAuth({ children }) {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <BrowserRouter>
+          <ToastContainer />
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/sub-login" element={<SubLogin />} />

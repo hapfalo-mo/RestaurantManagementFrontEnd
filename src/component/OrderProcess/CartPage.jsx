@@ -5,11 +5,13 @@ import { useCart } from "../../hooks/useCart";
 import { useAuth } from "../../hooks/userAuth";
 import * as FoodAPI from "../../service/FoodAPI"
 import * as OrderAPI from "../../service/OrderAPI"
+import { toast } from 'react-toastify'
 // import {}
 import Cookies from "js-cookie";
 export default function PizzaCart() {
     const [orderItem, setOrderItem] = useState([]);
     const [totalMoney, setTotal] = useState(0);
+    const [OTPFormStatus, setOTPFormStatus] = useState(false);
     const { addToCart, removeFromCart, subtractFromCart, carts, setCarts } = useCart();
     const { user } = useAuth();
     const getAllFood = async () => {
@@ -30,14 +32,16 @@ export default function PizzaCart() {
             console.log(error);
         }
     }
+
     const paymentfunction = async () => {
         try {
             let OrderRequest = {
-                "UserId": user.userID,
+                "UserId": user.id,
                 "TotalPrice": totalMoney
             };
 
             const resultOrder = await OrderAPI.createNewOrder(OrderRequest);
+            console.log(resultOrder?.data);
             if (!resultOrder) {
                 console.log("Cannot get resultOrder");
                 return;
@@ -45,10 +49,10 @@ export default function PizzaCart() {
 
             const cart = Cookies.get("cart");
             const orderItemList = JSON.parse(cart);
-
+            console.log(orderItemList);
             for (let item of orderItemList) {
                 let data2 = {
-                    "OrderId": resultOrder?.Data.OrderId,
+                    "OrderId": resultOrder?.data.OrderId,
                     "FoodId": item?.Id,
                     "Quantity": item?.quantity,
                     "Price": item?.Price * item?.quantity
@@ -56,19 +60,21 @@ export default function PizzaCart() {
                 const response = await OrderAPI.createOrderItem(data2);
                 console.log("Order item response:", response);
             }
-
             setCarts([]);
             Cookies.remove("cart");
-
             setTimeout(() => {
                 alert("Đơn hàng đã được tạo thành công!");
             }, 500);
-
         } catch (error) {
             console.log("Error:", error);
         }
     };
 
+    // Open OTP Form and Notification
+    const openOTPFormAndNoti = async () => {
+        setOTPFormStatus(true);
+        toast.info("Mã OTP đã được gửi qua email. Mã OTP chỉ có hiệu lực trong vòng 2 phút!");
+    }
 
     useEffect(() => {
         getAllFood();
@@ -168,7 +174,7 @@ export default function PizzaCart() {
                                 <span>0$</span>
                             </div>
                             <div className="bg-yellow-700 hover:bg-yellow-900 cursor-pointer text-white rounded-lg px-4 py-3 text-center font-semibold"
-                                onClick={paymentfunction}
+                                onClick={openOTPFormAndNoti()}
                             >
                                 Thanh Toán {totalMoney.toLocaleString()}$
                             </div>
@@ -190,6 +196,59 @@ export default function PizzaCart() {
                                 ))}
                             </div>
                         </div>
+                        {/* OTP Confirmation */}
+                        {/* {OTPFormStatus == true && (
+                            <div className="fixed inset-50 flex flex-col items-center justify-center gap-4 bg-black border-1 border-yellow-900 p-6 rounded-2xl shadow-xl max-h-[90vh] max-w-sm mx-auto h-auto z-50">
+                                <h3 className="text-xl text-yellow-900 font-semibold  mb-2">Vui lòng nhập OTP để xác nhận</h3>
+                                <input
+                                    type="text"
+                                    maxLength={6}
+                                    className="border border-1 text-white rounded-lg px-4 py-2 text-center tracking-widest text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    placeholder="6-digit OTP"
+                                />
+                                <div className="flex justify-between w-60">
+                                    <button
+                                        className="bg-yellow-900 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition cursor-pointer"
+                                    // onClick={() => handleOtpSubmit(otp)}
+                                    >
+                                        Xác nhận
+                                    </button>
+                                    <button
+                                        className="bg-red-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition cursor-pointer"
+                                    // onClick={() => handleOtpSubmit(otp)}
+                                    >
+                                        Hủy
+                                    </button>
+                                </div>
+                            </div>
+                        )} */}
+                        {OTPFormStatus == true && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center">
+                                <div className="w-[380px] h-[300px] flex flex-col items-center justify-center gap-4 bg-black border border-yellow-900 p-6 rounded-2xl shadow-xl">
+                                    <h3 className="text-xl text-white font-semibold mb-2">
+                                        Vui lòng nhập mã OTP để xác nhận
+                                    </h3>
+                                    <input
+                                        type="text"
+                                        maxLength={6}
+                                        className="border text-white rounded-lg px-4 py-2 text-center tracking-widest text-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                        placeholder="6-digit OTP"
+                                    />
+                                    <div className="flex flex-col gap-4 justify-between w-60">
+                                        <button className="bg-yellow-700 text-white px-6 py-2 rounded-lg shadow hover:bg-yellow-500 transition cursor-pointer">
+                                            Xác nhận
+                                        </button>
+                                        <button
+                                            className="bg-red-500 text-white px-6 py-2 rounded-lg shadow hover:bg-red-600 transition cursor-pointer"
+                                            onClick={() => setOTPFormStatus(false)}
+                                        >
+                                            Hủy
+                                        </button>
+                                        <p className=" cursor-pointer text-gray-400 w-full justify-center flex item-center underline">Bạn chưa nhận được mã ?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             ) : (

@@ -27,8 +27,8 @@ function Login() {
         if (response.status === 200) {
             setTimeout(() => setLoading(false), 3000);
             try {
-                console.log(response?.data.data);
-                const userDecode = jwtDecode(response?.data.data);
+                console.log(response?.data.data.data.token);
+                const userDecode = jwtDecode(response?.data.data.data.token);
                 saveUser(userDecode);
                 console.log(user);
                 navigate("/homepage");
