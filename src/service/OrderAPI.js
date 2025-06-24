@@ -83,3 +83,30 @@ export const getAllOrderDetails = async (id) => {
         console.log(error);
     }
 }
+
+// Generate and Send OTP    
+export const generateOTP = async (email) => {
+    var tokenReal = await Cookies.get("token");
+    try {
+        const response = await axios.post(`${API_URL}/send-otp/${email}`, {}, {
+            headers:
+                { "Authorization": `Bearer ${tokenReal}` }
+        })
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// Authen API 
+export const isValidOTP = async (data) => {
+    try {
+        const response = await axios.post(`${API_URL}/isvalid-otp`, data, {
+            headers:
+                { "Authorization": `Bearer ${token}` }
+        })
+        return response;
+    } catch (error) {
+        console.log(error);
+    }
+}
