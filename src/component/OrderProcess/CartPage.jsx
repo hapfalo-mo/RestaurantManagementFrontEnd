@@ -15,6 +15,8 @@ export default function PizzaCart() {
     const { addToCart, removeFromCart, subtractFromCart, carts, setCarts } = useCart();
     const [otpValue, setOtpValue] = useState("");
     const { user } = useAuth();
+    const [timeOTP, setTimeOTP] = useState(120);
+    const [OTPStatus, setOTPStatus] = useState(false);
     const getAllFood = async () => {
         let request = {
             "page": 1,
@@ -68,7 +70,7 @@ export default function PizzaCart() {
                 setCarts([]);
                 Cookies.remove("cart");
                 setTimeout(() => {
-                    alert("Đơn hàng đã được tạo thành công!");
+                    toast.success("Đơn hàng đã được tạo thành công! Kiểm tra trong lịch sử mua hàng để biết thêm chi tiết");
                 }, 500);
             } else {
                 toast.error("Mã xác thực không đúng! Vui lòng kiểm tra lại");
@@ -81,6 +83,8 @@ export default function PizzaCart() {
     // Open OTP Form and Notification
     const openOTPFormAndNoti = async () => {
         setOTPFormStatus(true);
+        setOTPStatus(true);
+        setTimeOTP(120);
         //console.log(user);
         try {
             const response = await OrderAPI.generateOTP(user?.email);
@@ -104,6 +108,14 @@ export default function PizzaCart() {
         }, 0);
         setTotal(t);
     }, [carts]);
+
+    useEffect(() => {
+        if (timeOTP == 0) return;
+        const interval = setInterval(() => {
+            setTimeOTP(prev => prev - 1);
+        }, 1000)
+        return () => clearInterval(interval);
+    }, [timeOTP])
     //---------------------------
     return (
         <div>
@@ -244,7 +256,23 @@ export default function PizzaCart() {
                                         >
                                             Hủy
                                         </button>
-                                        <p className=" cursor-pointer text-gray-400 w-full justify-center flex item-center underline">Bạn chưa nhận được mã ?</p>
+                                        {OTPStatus && (
+                                            <div className="flex flex-col items-center w-full">
+                                                {timeOTP > 0 ? (
+                                                    <p className="text-gray-400 w-full text-center">
+                                                        Gửi lại mã sau <span className="font-semibold text-yellow-500">{timeOTP}s</span>
+                                                    </p>
+                                                ) : (
+                                                    <p
+                                                        className="cursor-pointer text-blue-500 w-full text-center underline hover:text-blue-700"
+                                                        onClick={openOTPFormAndNoti}
+                                                    >
+                                                        Bạn chưa nhận được mã? <span className="font-bold">Gửi lại mã</span>
+                                                    </p>
+                                                )}
+                                            </div>
+                                        )}
+
                                     </div>
                                 </div>
                             </div>
